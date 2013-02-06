@@ -1,5 +1,7 @@
 require 'msgpack'
 module HokieSpa
+  class NetworkError < StandardError; end
+
   def self.root
     File.expand_path '../..', __FILE__
   end
@@ -10,7 +12,9 @@ from hokiespa import hokiespa
 import sys
 import msgpack
     PYTHON
-    MessagePack.unpack `cd #{root}; python -c "#{prelude << s}"`
+    v = `cd #{root}; python -c "#{prelude << s}"`
+    raise NetworkError if $?.exitstatus != 0
+    MessagePack.unpack v
   end
 
   class HokieSpa
