@@ -2,6 +2,11 @@ require 'msgpack'
 module HokieSpa
   class NetworkError < StandardError; end
 
+  SPRING = 0
+  SUMMER_I  = 1
+  SUMMER_II = 2
+  FALL = 3
+
   def self.root
     File.expand_path '../..', __FILE__
   end
@@ -30,7 +35,7 @@ sys.stdout.write(k)
 
     def get_courses(subject_code, year, term, only_open = false)
       ::HokieSpa.runp <<-PYTHON
-k = hokiespa.getCourses('#{subject_code}', '#{year}', '#{term}', #{only_open ? 'True':'False'})
+k = hokiespa.getCourses('#{subject_code}', #{year}, #{term}, #{only_open ? 'True':'False'})
 f = list()
 for c in k:
   h = c.__dict__
@@ -42,14 +47,14 @@ sys.stdout.write(msgpack.packb(f))
 
     def get_course_ids(subject_code, year, term, only_open = false)
       ::HokieSpa.runp <<-PYTHON
-k = hokiespa.getCourseIds('#{subject_code}', '#{year}', '#{term}', #{only_open ? 'True':'False'})
+k = hokiespa.getCourseIds('#{subject_code}', #{year}, #{term}, #{only_open ? 'True':'False'})
 sys.stdout.write(msgpack.packb(list(k)))
       PYTHON
     end
 
     def get_course_ids_and_crses(subject_code, year, term, only_open = false)
       ::HokieSpa.runp <<-PYTHON
-k = hokiespa.getCourseIdsAndCRSEs('#{subject_code}', '#{year}', '#{term}', #{only_open ? 'True':'False'})
+k = hokiespa.getCourseIdsAndCRSEs('#{subject_code}', #{year}, #{term}, #{only_open ? 'True':'False'})
 sys.stdout.write(msgpack.packb(list(k)))
       PYTHON
     end

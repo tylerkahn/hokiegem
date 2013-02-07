@@ -17,6 +17,12 @@ class Course(object):
         self.instructor = self.type = self.capacity = self.comments = None
         self.meeting_times = []
 
+class Term(object):
+    SPRING      = 0
+    SUMMER_I    = 1
+    SUMMER_II   = 2
+    FALL        = 3
+
 def getSubjects():
     resp = requests.get(Constants.getURL)
     PQ = PyQuery(resp.content)
@@ -40,11 +46,15 @@ def getCourses(subjectCode, year, term, onlyOpen = False):
         yield extractCourse(chtml)
 
 def pullSubjectPage(subjectCode, year, term, onlyOpen = False):
+    term = { 0 : '01',
+             1 : '06',
+             2 : '07',
+             3 : '09'}[term]
     if (onlyOpen):
         switch = "on"
     else:
         switch = ""
-    data = {"CAMPUS" : 0, "TERMYEAR" : year+term, "SUBJ_CODE" : subjectCode, "open_only" : switch, "CORE_CODE" : "AR%", "PRINT_FRIEND" : "Y"}
+    data = {"CAMPUS" : 0, "TERMYEAR" : str(year)+str(term), "SUBJ_CODE" : subjectCode, "open_only" : switch, "CORE_CODE" : "AR%", "PRINT_FRIEND" : "Y"}
     resp = requests.post(Constants.postURL, data)
     return resp.content
 
